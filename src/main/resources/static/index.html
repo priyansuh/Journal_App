@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JournalApp | Personal Digital Journal</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <a href="#" class="brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-book-bookmark"></i>
+      </div>
+      <span>JournalApp</span>
+    </a>
+
+    <div class="nav-actions">
+      <!-- Active User Display -->
+      <div class="user-pill" id="userPillBtn" title="Switch or Manage Users">
+        <div class="user-avatar" id="navUserAvatar">U</div>
+        <span class="user-name" id="navUserName">Select User</span>
+        <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted); margin-left: 0.25rem;"></i>
+      </div>
+
+      <button class="btn btn-secondary btn-sm" id="newUserBtn">
+        <i class="fa-solid fa-user-plus"></i> New User
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <div class="header-title">
+        <h1 id="welcomeTitle">My Journal Entries</h1>
+        <p id="welcomeSub">Capture your thoughts, daily reflections, and memories.</p>
+      </div>
+
+      <div class="action-bar">
+        <!-- Search Box -->
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="Search entries by title or content...">
+        </div>
+
+        <button class="btn btn-primary" id="createEntryBtn">
+          <i class="fa-solid fa-plus"></i> New Entry
+        </button>
+
+        <button class="btn btn-secondary" id="refreshBtn" title="Refresh Entries">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fa-solid fa-book"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="statTotalEntries">0</h3>
+          <p>Total Entries</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(236, 72, 153, 0.15); color: var(--accent-pink);">
+          <i class="fa-solid fa-user-check"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="statActiveUser">--</h3>
+          <p>Active User</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </div>
+        <div class="stat-info">
+          <h3 id="statLastUpdated">Never</h3>
+          <p>Last Activity</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journal Entries Grid -->
+    <div class="journal-grid" id="journalGrid">
+      <!-- Cards rendered dynamically via app.js -->
+    </div>
+
+  </main>
+
+  <!-- Create / Edit Entry Modal -->
+  <div class="modal-overlay" id="entryModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="entryModalTitle">Create Journal Entry</h2>
+        <button class="close-btn" id="closeEntryModal">&times;</button>
+      </div>
+      <form id="entryForm">
+        <input type="hidden" id="entryId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="entryTitle">Title</label>
+            <input type="text" id="entryTitle" class="form-control" placeholder="What's on your mind today?" required>
+          </div>
+          <div class="form-group">
+            <label for="entryContent">Thoughts / Content</label>
+            <textarea id="entryContent" class="form-control" placeholder="Write your journal entry here..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelEntryModal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveEntryBtn">
+            <i class="fa-solid fa-check"></i> Save Entry
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Entry Details Modal -->
+  <div class="modal-overlay" id="viewModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="viewModalTitle">Journal Entry Details</h2>
+        <button class="close-btn" id="closeViewModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <span class="card-date" id="viewModalDate">Sept 30, 2026</span>
+        </div>
+        <div id="viewModalContent" style="color: var(--text-main); font-size: 1rem; line-height: 1.7; white-space: pre-wrap; word-break: break-word;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="closeViewModalBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Select / Create Modal -->
+  <div class="modal-overlay" id="userModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>User Management</h2>
+        <button class="close-btn" id="closeUserModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Select Existing User -->
+        <div class="form-group">
+          <label>Select Active User</label>
+          <select class="form-control" id="userSelectDropdown">
+            <option value="">-- Choose User --</option>
+          </select>
+        </div>
+
+        <div style="text-align: center; margin: 1.25rem 0; color: var(--text-subtle); position: relative;">
+          <span style="background: #111726; padding: 0 0.5rem; position: relative; z-index: 1;">OR CREATE NEW</span>
+          <hr style="border: 0; border-top: 1px solid var(--border-glass); margin-top: -0.65rem;">
+        </div>
+
+        <!-- Create New User Form -->
+        <form id="createUserForm">
+          <div class="form-group">
+            <label for="newUserName">Username</label>
+            <input type="text" id="newUserName" class="form-control" placeholder="e.g. john_doe" required>
+          </div>
+          <div class="form-group">
+            <label for="newUserPassword">Password</label>
+            <input type="password" id="newUserPassword" class="form-control" placeholder="Enter password" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            <i class="fa-solid fa-user-check"></i> Create User
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
